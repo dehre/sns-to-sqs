@@ -21,18 +21,19 @@ const sqs: SQS = new AWS.SQS()
 
 
 // create SNS topic by given a topic name and return ARN
-async function createSNSTopic(topicName: string): Promise<topicARN | undefined> {
+export async function createSNSTopic(topicName: string): Promise<string | null> {
   const topicParams: SNS.CreateTopicInput = {
     Name: topicName
   }
   const topicResponse: SNS.CreateTopicResponse = await sns.createTopic(topicParams).promise()
 
+  if(!topicResponse.TopicArn) return null
   return topicResponse.TopicArn
 }
 
 
 // create SQS queue by given topic name and return ARN
-async function createSQSQueue(queueName: string): Promise<string | null> {
+export async function createSQSQueue(queueName: string): Promise<string | null> {
   const queueParams: SQS.CreateQueueRequest = {
     QueueName: queueName
   }
@@ -45,7 +46,7 @@ async function createSQSQueue(queueName: string): Promise<string | null> {
   const queueAttributesResult: SQS.GetQueueAttributesResult = await sqs.getQueueAttributes(queueAttributesParams).promise()
 
   if(!queueAttributesResult.Attributes) return null
-  return queueAttributesResult.Attributes.QueueArn
+  return queueAttributesResult.Attributes.QueueArn as string
 }
 
 
@@ -56,6 +57,3 @@ async function bootstrap(){
   console.log(`SNS --> ${snsTopicArn}`)
   console.dir(`SQS --> ${sqsQueueArn}`)
 }
-
-
-bootstrap()
