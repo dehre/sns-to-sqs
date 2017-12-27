@@ -1,23 +1,9 @@
-import * as AWS from 'aws-sdk'
-import { ConfigurationOptions } from 'aws-sdk/lib/config'
+import { sns, sqs } from './initialize'
 import { SNS, SQS } from 'aws-sdk';
 import { AWSError } from 'aws-sdk/lib/error';
 import { Request } from 'aws-sdk/lib/request';
 import { GetQueueAttributesRequest, GetQueueAttributesResult } from 'aws-sdk/clients/sqs';
 import { topicARN } from 'aws-sdk/clients/sns';
-
-// configure AWS
-const { region, accessKeyId, secretAccessKey } = require('../secret.json')
-const configurationOptions: ConfigurationOptions = {
-  region,
-  accessKeyId,
-  secretAccessKey
-}
-AWS.config.update(configurationOptions)
-
-
-const sns: SNS = new AWS.SNS()
-const sqs: SQS = new AWS.SQS()
 
 
 // create SNS topic by given a topic name and return ARN

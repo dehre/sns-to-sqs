@@ -1,5 +1,5 @@
 import * as Router from 'koa-router'
-import { createSNSTopic, createSQSQueue, getSQSArn, subscribeSQStoSNS, updateSQSPermissions } from './create'
+import { createSNSTopic, createSQSQueue, getSQSArn, subscribeSQStoSNS, updateSQSPermissions } from './aws/create'
 
 const router: Router = new Router()
 
