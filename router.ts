@@ -1,5 +1,5 @@
 import * as Router from 'koa-router'
-import { createSNSTopic, createSQSQueue, getSQSArn, subscribeSQStoSNS, updateSQSPermissions } from './aws/create'
+import { createSNSTopic, createSQSQueue, subscribeSQStoSNS, updateSQSPermissions, SNSTopicInterface, SQSQueueInterface } from './aws/create'
 import { publish } from './aws/publish'
 import { consumeMessages } from './aws/consume';
 
@@ -18,25 +18,32 @@ router.get('/', ctx => {
 })
 
 router.get('/create', async ctx => {
-  const sqsQueueUrl = await createSQSQueue('demo')
-  if(!sqsQueueUrl) throw new Error('SQS Queue Url is not available')
+  const snsTopic: SNSTopicInterface = await createSNSTopic('demo')
+  const sqsQueue: SQSQueueInterface = await createSQSQueue('demo')
 
-  const sqsQueueArn = await getSQSArn(sqsQueueUrl)
-  const snsTopicArn = await createSNSTopic('demo')
-  if(!(snsTopicArn && sqsQueueArn)) throw new Error('ARN is missing in SNS or SQS')
+  if(!snsTopic.arn) throw new Error('Failed to create new SNS Topic')
+  if(!sqsQueue.url || !sqsQueue.arn) throw new Error('Failed to create new SQS Queue')
 
-  await subscribeSQStoSNS(snsTopicArn, sqsQueueArn)
-  await updateSQSPermissions(snsTopicArn, sqsQueueUrl, sqsQueueArn)
+  await subscribeSQStoSNS({
+    snsTopicArn: snsTopic.arn, 
+    sqsQueueArn: sqsQueue.arn
+  })
+  await updateSQSPermissions({
+    snsTopicArn: snsTopic.arn,
+    sqsQueueUrl: sqsQueue.url, 
+    sqsQueueArn: sqsQueue.arn
+  })
 
-  // make Arn available
-  config.sqsQueueUrl = sqsQueueUrl
-  config.sqsQueueArn = sqsQueueArn
-  config.snsTopicArn = snsTopicArn
+  // make credentials available
+  config.sqsQueueUrl = sqsQueue.url
+  config.sqsQueueArn = sqsQueue.arn
+  config.snsTopicArn = snsTopic.arn
 
   ctx.body = {
     message: 'Setup is fine'
   }
 })
+
 
 router.get('/publish', async ctx => {
   const publishData = await publish(config.snsTopicArn)
@@ -46,6 +53,7 @@ router.get('/publish', async ctx => {
   }
 })
 
+
 router.get('/consume', async ctx => {
   const readData = await consumeMessages(config.sqsQueueUrl)
   
@@ -53,5 +61,6 @@ router.get('/consume', async ctx => {
     success: readData
   }
 })
+
 
 export { router }
