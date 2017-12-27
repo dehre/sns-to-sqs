@@ -1,0 +1,23 @@
+{
+  "name": "sqs_sns",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "dependencies": {
+    "aws-sdk": "^2.175.0",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.11.0"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "build:watch": "npm run clean && tsc -w",
+    "clean": "rm -rf ./dist",
+    "prettify": "prettier --write \"{src,test}/**/*.ts\"",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "L-oris",
+  "license": "ISC"
+}
