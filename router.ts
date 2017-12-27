@@ -9,17 +9,17 @@ router.get('/', ctx => {
 
 router.get('/create', async ctx => {
   const sqsQueueUrl = await createSQSQueue('demo')
-  if(!sqsQueueUrl) throw new Error('Cannot set up SQS Queue')
+  if(!sqsQueueUrl) throw new Error('SQS Queue Url is not available')
 
   const sqsQueueArn = await getSQSArn(sqsQueueUrl)
   const snsTopicArn = await createSNSTopic('demo')
-  if(!(snsTopicArn && sqsQueueArn)) throw new Error('Cannot set up SNS Topic')
+  if(!(snsTopicArn && sqsQueueArn)) throw new Error('ARN is missing in SNS or SQS')
 
   await subscribeSQStoSNS(snsTopicArn, sqsQueueArn)
   await updateSQSPermissions(snsTopicArn, sqsQueueUrl, sqsQueueArn)
 
   ctx.body = {
-    message: 'setup is fine'
+    message: 'Setup is fine'
   }
 })
 

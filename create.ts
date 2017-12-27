@@ -16,8 +16,8 @@ const configurationOptions: ConfigurationOptions = {
 AWS.config.update(configurationOptions)
 
 
-const sns: SNS = new AWS.SNS({apiVersion: '2010-03-31'})
-const sqs: SQS = new AWS.SQS({apiVersion: '2012-11-05'})
+const sns: SNS = new AWS.SNS()
+const sqs: SQS = new AWS.SQS()
 
 
 // create SNS topic by given a topic name and return ARN
@@ -70,16 +70,33 @@ export async function subscribeSQStoSNS(snsTopicARN: string, sqsQueueARN: string
 
 
 // add permissions to enable sns topic to write in sqs queue
-export async function updateSQSPermissions(snsTopicARN: string, sqsQueueUrl: string, sqsQueueARN: string): Promise<void> {
-  const attributes: SQS.QueueAttributeMap = {
-    QueueArn: sqsQueueARN
+export async function updateSQSPermissions(snsTopicArn: string, sqsQueueUrl: string, sqsQueueArn: string): Promise<void> {
+  const attributes = {
+    'Version': '2012-10-17',
+    'Id': sqsQueueArn + '/SQSDefaultPolicy',
+    'Statement': [{
+      'Sid': 'Sid' + new Date().getTime(),
+      'Effect': 'Allow',
+      'Principal': {
+        'AWS': '*'
+      },
+      'Action': 'SQS:SendMessage',
+      'Resource': sqsQueueArn,
+      'Condition': {
+        'ArnEquals': {
+          'aws:SourceArn': snsTopicArn
+        }
+      }
+    }]
   }
   const params: SQS.SetQueueAttributesRequest = {
     QueueUrl: sqsQueueUrl,
-    Attributes: attributes
+    Attributes: {
+      'Policy': JSON.stringify(attributes)
+    }
   }
 
-  await sqs.setQueueAttributes(params)
+ await sqs.setQueueAttributes(params)
 }
 
 
