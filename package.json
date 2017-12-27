@@ -16,6 +16,7 @@
     "clean": "rm -rf ./dist",
     "prettify": "prettier --write \"{src,test}/**/*.ts\"",
     "start": "node dist/index.js",
+    "createTopic": "node dist/create.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "L-oris",
