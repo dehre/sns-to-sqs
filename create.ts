@@ -50,10 +50,16 @@ export async function createSQSQueue(queueName: string): Promise<string | null> 
 }
 
 
-// bootstrap the application
-async function bootstrap(){
-  const snsTopicArn = await createSNSTopic('demo')
-  const sqsQueueArn = await createSQSQueue('demo')
-  console.log(`SNS --> ${snsTopicArn}`)
-  console.dir(`SQS --> ${sqsQueueArn}`)
+// enable us to publish to sqs queue
+export async function subscribeSQStoSNS(snsTopicARN: string, sqsQueueARN: string): Promise<void> {
+  const subscribeParams: SNS.Types.SubscribeInput = {
+    TopicArn: snsTopicARN,
+    Protocol: 'sqs',
+    Endpoint: sqsQueueARN
+  }
+  
+  await sns.subscribe(subscribeParams).promise()
 }
+
+
+
