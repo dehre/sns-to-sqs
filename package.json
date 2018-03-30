@@ -12,16 +12,23 @@
   "devDependencies": {
     "@types/koa": "^2.0.43",
     "@types/koa-bodyparser": "^3.0.26",
-    "@types/koa-router": "^7.0.27"
+    "@types/koa-router": "^7.0.27",
+    "prettier": "^1.11.1"
   },
   "scripts": {
     "build": "npm run clean && tsc",
     "build:watch": "npm run clean && tsc -w",
     "clean": "rm -rf ./dist",
-    "prettify": "prettier --write \"{src,test}/**/*.ts\"",
+    "prettify": "prettier --write \"{src}/**/*.ts\"",
     "start": "node dist/index.js",
-    "createTopic": "node dist/create.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "createTopic": "node dist/create.js"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "printWidth": 80
   },
   "author": "L-oris",
   "license": "ISC"

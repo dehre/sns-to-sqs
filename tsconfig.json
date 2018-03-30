@@ -10,9 +10,7 @@
     "noImplicitAny": false,
     "noEmitOnError": false,
     "outDir": "./dist",
-    "sourceRoot": "./"
+    "sourceRoot": "./src"
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

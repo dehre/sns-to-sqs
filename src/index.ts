@@ -4,20 +4,19 @@ import { router } from './router'
 
 const app: Koa = new Koa()
 
-
 // error handler
 app.use(async (ctx, next) => {
   try {
     await next()
-  } catch(err){
+  } catch (err) {
     ctx.status = err.status || 500
     ctx.body = {
       status: err.status || 500,
-      errorMessage: err.message || `Internal Server Error`
+      errorMessage: err.message || `Internal Server Error`,
     }
     // disable error logs when testing
-    if(process.env.NODE_ENV !== 'test'){
-      console.log(`Server Error --> ${err}`);
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(`Server Error --> ${err}`)
     }
   }
 })
