@@ -1,14 +1,24 @@
 import * as AWS from 'aws-sdk'
 import { SNS, AWSError } from 'aws-sdk'
+import { TConfig } from '../types'
+const {
+  accessKeyId,
+  secretAccessKey,
+  region,
+  snsTopicArn,
+} = require('../../config.json') as TConfig
 
-// config
-AWS.config.loadFromPath('./config.json')
-const topicArn = 'arn:aws:sns:eu-west-1:xxxxxxxxx:xxxxx'
+// write AWS access credentials
+AWS.config.update({
+  accessKeyId,
+  secretAccessKey,
+  region,
+})
 
 const sns = new AWS.SNS()
 
 const publishParams: SNS.Types.PublishInput = {
-  TopicArn: topicArn,
+  TopicArn: snsTopicArn,
   Message: 'Hello There',
 }
 sns.publish(publishParams, publishCallback)

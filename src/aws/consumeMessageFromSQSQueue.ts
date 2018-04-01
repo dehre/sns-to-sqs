@@ -1,14 +1,24 @@
 import * as AWS from 'aws-sdk'
 import { AWSError, SQS } from 'aws-sdk'
+import { TConfig } from '../types'
+const {
+  accessKeyId,
+  secretAccessKey,
+  region,
+  sqsQueueUrl,
+} = require('../../config.json') as TConfig
 
-// config
-AWS.config.loadFromPath('./config.json')
-const queueUrl = 'https://sqs.eu-west-1.amazonaws.com/xxxxxxxxx/xxxxx'
+// write AWS access credentials
+AWS.config.update({
+  accessKeyId,
+  secretAccessKey,
+  region,
+})
 
 const sqs = new AWS.SQS()
 
 const receiveMessageParams: SQS.Types.ReceiveMessageRequest = {
-  QueueUrl: queueUrl,
+  QueueUrl: sqsQueueUrl,
 }
 sqs.receiveMessage(receiveMessageParams, receiveMessageCallback)
 
@@ -20,10 +30,10 @@ function receiveMessageCallback(
   console.log(data)
 
   if (data.Messages && data.Messages.length) {
-    console.log('Do something with message, eg. write to DB')
+    console.log('Do something with message, eg. write data to DB')
 
     const deleteMessageParams = {
-      QueueUrl: queueUrl,
+      QueueUrl: sqsQueueUrl,
       ReceiptHandle: data.Messages[0].ReceiptHandle,
     }
     sqs.deleteMessage(deleteMessageParams, deleteMessageCallback)
