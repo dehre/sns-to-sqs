@@ -12,4 +12,4 @@ node_modules/
 .npm
 
 # AWS credentials
-secret.json
+config.json

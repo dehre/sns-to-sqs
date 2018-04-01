@@ -21,7 +21,9 @@
     "clean": "rm -rf ./dist",
     "prettify": "prettier --write \"{src}/**/*.ts\"",
     "start": "node dist/index.js",
-    "createTopic": "node dist/create.js"
+    "createTopic": "node dist/create.js",
+    "publishMessage": "node dist/aws/publishToSNSTopic.js",
+    "readMessage": "node dist/aws/receiveMessageFromSQSQueue.js"
   },
   "prettier": {
     "semi": false,
