@@ -14,16 +14,30 @@ AWS.config.update({
   secretAccessKey,
   region,
 })
-
 const sns = new AWS.SNS()
 
-const publishParams: SNS.Types.PublishInput = {
+export async function publishToSns(message: string) {
+  const publishParams: SNS.PublishInput = {
+    TopicArn: snsTopicArn,
+    Message: message,
+  }
+  console.log('publish-event')
+  return sns.publish(publishParams).promise()
+}
+
+/*
+// CALLBACK VERSION
+
+
+const publishParams: SNS.PublishInput = {
   TopicArn: snsTopicArn,
   Message: 'Hello There',
 }
 sns.publish(publishParams, publishCallback)
 
-function publishCallback(err: AWSError, data: SNS.Types.PublishResponse): void {
+function publishCallback(err: AWSError, data: SNS.PublishResponse): void {
   console.log('message published')
   console.log(data)
 }
+
+*/

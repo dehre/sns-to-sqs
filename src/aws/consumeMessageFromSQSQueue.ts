@@ -14,17 +14,39 @@ AWS.config.update({
   secretAccessKey,
   region,
 })
-
 const sqs = new AWS.SQS()
 
-const receiveMessageParams: SQS.Types.ReceiveMessageRequest = {
+export async function readFromSQS() {
+  const receiveMessageParams: SQS.ReceiveMessageRequest = {
+    QueueUrl: sqsQueueUrl,
+  }
+  console.log('read-event')
+  return sqs.receiveMessage(receiveMessageParams).promise()
+}
+
+export async function deleteFromSQS(event: SQS.ReceiveMessageResult) {
+  if (event.Messages && event.Messages.length) {
+    const deleteMessageParams: SQS.DeleteMessageRequest = {
+      QueueUrl: sqsQueueUrl,
+      ReceiptHandle: event.Messages[0].ReceiptHandle,
+    }
+    console.log('delete-event')
+    return sqs.deleteMessage(deleteMessageParams).promise()
+  }
+}
+
+/*
+// CALLBACK VERSION
+
+
+const receiveMessageParams: SQS.ReceiveMessageRequest = {
   QueueUrl: sqsQueueUrl,
 }
 sqs.receiveMessage(receiveMessageParams, receiveMessageCallback)
 
 function receiveMessageCallback(
   err: AWSError,
-  data: SQS.Types.ReceiveMessageResult
+  data: SQS.ReceiveMessageResult
 ): void {
   console.log('Received message')
   console.log(data)
@@ -42,8 +64,10 @@ function receiveMessageCallback(
 
 function deleteMessageCallback(
   err: AWSError,
-  data: SQS.Types.ReceiveMessageResult
+  data: SQS.ReceiveMessageResult
 ): void {
   console.log('message deleted')
   console.log(data)
 }
+
+*/
