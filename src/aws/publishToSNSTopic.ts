@@ -21,7 +21,7 @@ export async function publishToSns(message: string) {
     TopicArn: snsTopicArn,
     Message: message,
   }
-  console.log('publish-event')
+  console.log(`publish-event: "${message}" to "${snsTopicArn}"\n`)
   return sns.publish(publishParams).promise()
 }
 

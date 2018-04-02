@@ -17,21 +17,21 @@ AWS.config.update({
 const sqs = new AWS.SQS()
 
 export async function readFromSQS() {
-  const receiveMessageParams: SQS.ReceiveMessageRequest = {
+  const receiveParams: SQS.ReceiveMessageRequest = {
     QueueUrl: sqsQueueUrl,
   }
-  console.log('read-event')
-  return sqs.receiveMessage(receiveMessageParams).promise()
+  console.log(`read-event from "${sqsQueueUrl}"\n`)
+  return sqs.receiveMessage(receiveParams).promise()
 }
 
 export async function deleteFromSQS(event: SQS.ReceiveMessageResult) {
   if (event.Messages && event.Messages.length) {
-    const deleteMessageParams: SQS.DeleteMessageRequest = {
+    const deleteParams: SQS.DeleteMessageRequest = {
       QueueUrl: sqsQueueUrl,
       ReceiptHandle: event.Messages[0].ReceiptHandle,
     }
-    console.log('delete-event')
-    return sqs.deleteMessage(deleteMessageParams).promise()
+    console.log(`delete-event from "${sqsQueueUrl}"\n`)
+    return sqs.deleteMessage(deleteParams).promise()
   }
 }
 
